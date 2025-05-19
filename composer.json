@@ -1,32 +1,80 @@
 {
-  "name": "cedaro/wprestcop",
-  "description": "A WordPress plugin for managing access to the WP REST API.",
-  "keywords": [ "wordpress" ],
+  "name": "frosty-media/wp-tally",
   "type": "wordpress-plugin",
-  "homepage": "https://github.com/cedaro/wprestcop",
-  "license": "GPL-2.0+",
+  "license": "GPL-2.0-or-later",
+  "description": "A WordPress plugin for managing access to the WP REST API.",
   "authors": [
     {
       "name": "Brady Vercher",
       "email": "brady@blazersix.com",
-      "homepage": "http://www.cedaro.com/"
+      "homepage": "https://www.cedaro.com/"
+    },
+    {
+      "name": "Austin Passy",
+      "email": "367897+thefrosty@users.noreply.github.com",
+      "homepage": "https://austin.passy.co",
+      "role": "Developer"
     }
   ],
-  "support": {
-    "issues": "https://github.com/cedaro/wprestcop/issues",
-    "source": "https://github.com/cedaro/wprestcop"
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "phpstan/extension-installer": true,
+      "roots/wordpress-core-installer": true
+    },
+    "optimize-autoloader": true,
+    "platform": {
+      "php": "8.3"
+    },
+    "preferred-install": "dist",
+    "sort-packages": true
   },
   "require": {
-    "php": ">=5.4.0",
-    "composer/installers": "~1.0"
+    "php": "^8.3",
+    "pimple/pimple": "~3.0",
+    "symfony/http-foundation": "^7.1.7",
+    "thefrosty/wp-utilities": "^3.3"
   },
   "require-dev": {
-    "phpunit/phpunit": "*@stable"
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.0.0",
+    "php-stubs/wordpress-stubs": "~6.8",
+    "phpcompatibility/php-compatibility": "*",
+    "phpstan/extension-installer": "^1.4",
+    "rector/rector": "^2.0",
+    "roave/security-advisories": "dev-latest",
+    "roots/wordpress-no-content": "^6.8",
+    "slevomat/coding-standard": "~8.18",
+    "squizlabs/php_codesniffer": "^3.2",
+    "szepeviktor/phpstan-wordpress": "^2.0",
+    "vimeo/psalm": "^6.0",
+    "wp-coding-standards/wpcs": "^3.1"
   },
-  "autoload-dev": {
+  "autoload": {
     "psr-4": {
-      "Cedaro\\WPRESTCop\\Test\\": "tests/phpunit/",
-      "Cedaro\\WPRESTCop\\": "php/"
+      "FrostyMedia\\WpRestCop\\": "src/"
     }
+  },
+  "scripts": {
+    "install-codestandards": [
+      "Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\Plugin::run"
+    ],
+    "phpcs": [
+      "bash ./vendor/thefrosty/wp-utilities/bin/phpcs.sh --standard=phpcs-ruleset.xml"
+    ],
+    "phpstan": [
+      "bash ./vendor/thefrosty/wp-utilities/bin/phpstan.sh"
+    ],
+    "psalm": [
+      "bash ./vendor/thefrosty/wp-utilities/bin/psalm.sh"
+    ],
+    "eslint": [
+      "npm run eslint"
+    ],
+    "analyze-all-files": [
+      "./vendor/bin/phpcs --standard=phpcs-ruleset.xml",
+      "./vendor/bin/phpstan analyze src --memory-limit 1G",
+      "./vendor/bin/psalm --config=psalm.xml --show-info=true src"
+    ]
   }
 }
