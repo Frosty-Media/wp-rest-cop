@@ -228,6 +228,13 @@ class Plugin extends AbstractPlugin {
 			return $response;
 		}
 
+		/**
+		 * Allow skipping throttle for certain requests
+		 */
+		if ( apply_filters( 'wprestcop_skip_throttle', false, $request, $server ) ) {
+			return $response;
+		}
+
 		$meter = MeterMaid::make(
 			$this->get_client_id(),
 			$this->get_rate_limit(),

@@ -28,7 +28,7 @@ class MeterMaid {
 	 * @return Meter
 	 */
 	public static function make( $id, $limit, $interval ) {
-		$meter = wp_cache_get( self::get_cache_key( $id ), 'wprestcop' );
+		$meter = get_transient( self::get_cache_key( $id ) );
 		if ( false === $meter ) {
 			$meter = new Meter( $id, $limit, $interval );
 		}
@@ -49,10 +49,9 @@ class MeterMaid {
 	 * @param Meter $meter Meter instance.
 	 */
 	public static function save( Meter $meter ) {
-		wp_cache_set(
+		set_transient(
 			self::get_cache_key( $meter->get_id() ),
 			$meter,
-			'wprestcop',
 			$meter->get_reset()
 		);
 	}

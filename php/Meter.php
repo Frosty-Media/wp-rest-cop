@@ -10,13 +10,15 @@
 
 namespace Cedaro\WPRESTCop;
 
+use jsonSerializable;
+
 /**
  * Meter class.
  *
  * @package Cedaro\WPRESTCop
  * @since   1.0.0
  */
-class Meter implements \jsonSerializable {
+class Meter implements jsonSerializable {
 	/**
 	 * Unique meter identifier.
 	 *
@@ -126,7 +128,7 @@ class Meter implements \jsonSerializable {
 	 * @return bool
 	 */
 	public function is_limit_exceeded() {
-		return 0 > $this->get_remaining();
+		return apply_filters( 'wp_rest_cop_is_limit_exceeded', ( 0 > $this->get_remaining() ), $this->get_id(), $this );
 	}
 
 	/**
@@ -137,7 +139,7 @@ class Meter implements \jsonSerializable {
 	 * @return int
 	 */
 	public function get_remaining() {
-		return $this->remaining;
+		return apply_filters( 'wp_rest_cop_remaining', $this->remaining, $this->get_id(), $this );
 	}
 
 	/**
