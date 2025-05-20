@@ -50,9 +50,9 @@ use FrostyMedia\WpRestCop\RestApi\Officer;
  * Set the rate limit to 1000 requests every hour.
  */
 add_action( 'wp_rest_cop_plugin_loaded', static function(Officer $officer): void {
-	$officer
-		->setInterval(HOUR_IN_SECONDS)
-		->setLimit(1000);
+    $officer
+        ->setInterval(HOUR_IN_SECONDS)
+        ->setLimit(1000);
 });
 ```
 
@@ -99,10 +99,10 @@ use FrostyMedia\WpRestCop\RestApi\Officer;
  * Global IP rules configuration.
  */
 add_action( 'wp_rest_cop_plugin_loaded', static function(Officer $officer, IpRulesInterface $ipRules): void {
-	$ipRules->allow('192.168.50.4'); // Also accepts an array of IP addresses.
-
-	// Or...
-	$ipRules->deny('66.249.66.1'); // Also accepts an array of IP addresses.
+    $ipRules->allow('192.168.50.4'); // Also accepts an array of IP addresses.
+    
+    // Or...
+    $ipRules->deny('66.249.66.1'); // Also accepts an array of IP addresses.
 }, 10, 2);
 ```
 
