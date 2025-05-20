@@ -24,6 +24,7 @@ use function esc_html__;
 use function filter_var;
 use function get_current_user_id;
 use function is_user_logged_in;
+use function rest_authorization_required_code;
 use function rest_convert_error_to_response;
 use function sprintf;
 use function update_option;
@@ -273,8 +274,8 @@ class Officer extends AbstractContainerProvider implements HttpFoundationRequest
     {
         return new WP_Error(
             'rest_forbidden',
-            esc_html__('You don\'t have permission to do this.', 'wp-rest-cop'),
-            ['status' => WP_Http::FORBIDDEN]
+            esc_html__('Sorry, you are not allowed to do that.', 'wp-rest-cop'),
+            ['status' => rest_authorization_required_code()]
         );
     }
 }
