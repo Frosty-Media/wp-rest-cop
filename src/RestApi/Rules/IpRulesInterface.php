@@ -12,6 +12,7 @@ interface IpRulesInterface
 {
     public const string ALLOW = 'allow';
     public const string DENY = 'deny';
+    public const string IPS = 'ips';
 
     /**
      * Whether client ID passes allowed and denied checks.
