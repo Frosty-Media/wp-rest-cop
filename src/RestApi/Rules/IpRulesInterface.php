@@ -6,7 +6,7 @@ namespace FrostyMedia\WpRestCop\RestApi\Rules;
 
 /**
  * Access rules interface.
- * @package Cedaro\WPRESTCop
+ * @package FrostyMedia\WpRestCop\RestApi\Rules
  */
 interface IpRulesInterface
 {

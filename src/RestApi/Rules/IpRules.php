@@ -12,7 +12,7 @@ use function is_string;
 /**
  * IP address rules class.
  * phpcs:disable Squiz.Commenting.FunctionComment.MissingParamTag
- * @package Cedaro\WPRESTCop
+ * @package FrostyMedia\WpRestCop\RestApi\Rules
  */
 class IpRules implements IpRulesInterface
 {
