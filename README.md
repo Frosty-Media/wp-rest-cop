@@ -15,8 +15,8 @@ Manage access to the WP REST API with rate limits and IP-based rules.
 Rate limits allow for configuring the number of requests a client can make within a certain interval.
 The default in _WP Rest Cop_ is 60 requests per minute.
 
-The rate limit functionality requires
-a [persistent object cache](https://codex.wordpress.org/Class_Reference/WP_Object_Cache).
+The rate limit functionality uses [transients](https://developer.wordpress.org/apis/transients/)
+which will use [persistent object cache](https://codex.wordpress.org/Class_Reference/WP_Object_Cache) if present.
 
 ### Headers
 
