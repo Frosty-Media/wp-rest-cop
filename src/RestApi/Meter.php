@@ -50,7 +50,14 @@ class Meter implements JsonSerializable
     /**
      * Retrieve rate limit headers.
      * @ref https://developer.okta.com/docs/reference/rl-best-practices/
-     * @return string[]
+     * @return array{
+     *     'Retry-After'?: int,
+     *     'X-Rate-Limit-Limit': int,
+     *     'X-Rate-Limit-Remaining': int,
+     *     'X-Rate-Limit-Reset': int,
+     *     'X-Rate-Limit-Rules': 'Ip',
+     *     'X-RateLimit-Remaining'?: 0
+     * }
      */
     public function getHeaders(): array
     {
@@ -116,7 +123,7 @@ class Meter implements JsonSerializable
 
     /**
      * Convert the meter to an array.
-     * @return string[]
+     * @return array{limit: int, remaining: int, reset: int}
      */
     public function toArray(): array
     {
@@ -127,6 +134,10 @@ class Meter implements JsonSerializable
         ];
     }
 
+    /**
+     * Specify data which should be serialized to JSON.
+     * @return array
+     */
     public function jsonSerialize(): array
     {
         return $this->toArray();

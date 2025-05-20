@@ -29,6 +29,8 @@ class RestCop
 
     /**
      * Grant IP addresses access to the REST API.
+     * @param array $args
+     * @param array $assoc_args
      *
      * ## OPTIONS
      *
@@ -40,13 +42,15 @@ class RestCop
      *
      * @synopsis <ip>... [--delete]
      */
-    public function allow($args, $assoc_args): void
+    public function allow(array $args, array $assoc_args): void
     {
         $this->updateOption(IpRulesInterface::ALLOW, $args, isset($assoc_args['delete']));
     }
 
     /**
      * Deny IP addresses access to the REST API.
+     * @param array $args
+     * @param array $assoc_args
      *
      * ## OPTIONS
      *
@@ -58,14 +62,14 @@ class RestCop
      *
      * @synopsis <ip>... [--delete]
      */
-    public function deny($args, $assoc_args): void
+    public function deny(array $args, array $assoc_args): void
     {
         $this->updateOption(IpRulesInterface::DENY, $args, isset($assoc_args['delete']));
     }
 
     /**
      * Check the status of an IP address.
-     *
+     * @param array $args
      * ## OPTIONS
      *
      * <ip>
@@ -73,7 +77,7 @@ class RestCop
      *
      * @synopsis <ip>
      */
-    public function check($args, $assoc_args): void
+    public function check(array $args): void
     {
         if ($this->getRules()->check($args[0])) {
             WP_CLI::success(sprintf(esc_html__('%s is allowed to access the REST API.', 'wp-rest-cop'), $args[0]));
@@ -85,7 +89,7 @@ class RestCop
     /**
      * View IP address rules.
      */
-    public function status($args, $assoc_args): void
+    public function status(): void
     {
         $items = [];
         $labels = [
@@ -122,7 +126,7 @@ class RestCop
 
     /**
      * Set a plugin setting.
-     *
+     * @param array $args
      * ## OPTIONS
      *
      * <key>
@@ -133,7 +137,7 @@ class RestCop
      *
      * @synopsis <key> <value>
      */
-    public function set($args, $assoc_args): void
+    public function set(array $args): void
     {
         $settings = Officer::getSettings();
 
@@ -143,7 +147,7 @@ class RestCop
 
         $settings[$args[0]] = (int)$args[1];
         update_option(Officer::OPTION, $settings);
-        WP_CLI::success(sprintf(esc_html__('Updated %s setting to %s.', 'wp-rest-cop'), $args[0], $args[1]));
+        WP_CLI::success(sprintf(esc_html__('Updated %1$s setting to %2$s.', 'wp-rest-cop'), $args[0], $args[1]));
     }
 
     /**
@@ -151,7 +155,8 @@ class RestCop
      *
      * @param string $key Option name.
      * @param array $args Option values.
-     * @param boolean $delete Optional. Whether the passed values should be deleted from existing values. Default is to merge them.
+     * @param boolean $delete Optional. Whether the passed values should be deleted from existing values.
+     *  Default is to merge them.
      */
     protected function updateOption(string $key, array $args, bool $delete = false): void
     {
@@ -163,6 +168,12 @@ class RestCop
         update_option(Officer::OPTION, $settings);
     }
 
+    /**
+     * Get our IpRules object from the container.
+     * @return IpRules
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
     private function getRules(): IpRules
     {
         return $this->getContainer()->get(ServiceProvider::IP_RULES);

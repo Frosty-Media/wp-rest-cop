@@ -11,6 +11,7 @@ use function is_string;
 
 /**
  * IP address rules class.
+ * phpcs:disable Squiz.Commenting.FunctionComment.MissingParamTag
  * @package Cedaro\WPRESTCop
  */
 class IpRules implements IpRulesInterface
