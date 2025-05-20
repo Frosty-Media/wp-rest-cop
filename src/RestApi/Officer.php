@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace FrostyMedia\WpRestCop\RestApi;
 
 use Dwnload\WpSettingsApi\Api\Options;
-use FrostyMedia\WpRestCop\RestApi\Rules\IpRules;
 use FrostyMedia\WpRestCop\RestApi\Rules\IpRulesInterface;
 use FrostyMedia\WpRestCop\ServiceProvider;
 use FrostyMedia\WpRestCop\Settings\Settings;
@@ -165,7 +164,7 @@ class Officer extends AbstractContainerProvider implements HttpFoundationRequest
      */
     protected function initializeIpRules(): void
     {
-        /** @var IpRules $rules */
+        /** @var \FrostyMedia\WpRestCop\RestApi\Rules\IpRules $rules */
         $rules = $this->getContainer()->get(ServiceProvider::IP_RULES);
         $rules
             ->allow(Options::getOption(Settings::SETTING_ALLOW_RULES, Settings::SETTINGS))
@@ -180,7 +179,7 @@ class Officer extends AbstractContainerProvider implements HttpFoundationRequest
      */
     protected function checkIpRules(WP_Error|bool|null $error): WP_Error|bool|null
     {
-        /** @var IpRules $rules */
+        /** @var \FrostyMedia\WpRestCop\RestApi\Rules\IpRules $rules */
         $rules = $this->getContainer()->get(ServiceProvider::IP_RULES);
         if (!$rules->check($this->getIpAddress())) {
             return $this->getForbiddenError();
@@ -253,13 +252,12 @@ class Officer extends AbstractContainerProvider implements HttpFoundationRequest
             $ips = $request->get_attributes()[IpRulesInterface::IPS];
         }
 
-        /** @var IpRules $rules */
+        /** @var \FrostyMedia\WpRestCop\RestApi\Rules\IpRules $rules */
         $rules = $this->getContainer()->get(ServiceProvider::IP_RULES);
         if (!$ips instanceof IpRulesInterface) {
             $rules->allow($ips[IpRulesInterface::ALLOW] ?? '')->deny($ips[IpRulesInterface::DENY] ?? '');
         }
 
-//        error_log(print_r($this->getIpAddress(), true));
         if (!$rules->check($this->getIpAddress())) {
             $response = $this->getForbiddenError();
         }
