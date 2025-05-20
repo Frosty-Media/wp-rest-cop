@@ -110,12 +110,12 @@ class Officer extends AbstractContainerProvider implements HttpFoundationRequest
 
     /**
      * Set the number of seconds per interval.
-     * @param int $interval Seconds per interval.
+     * @param int|string $interval Seconds per interval.
      * @return $this
      */
-    public function setInterval(int $interval): static
+    public function setInterval(int|string $interval): static
     {
-        $this->interval = $interval;
+        $this->interval = (int)$interval;
         return $this;
     }
 
@@ -130,12 +130,12 @@ class Officer extends AbstractContainerProvider implements HttpFoundationRequest
 
     /**
      * Set the number of requests allowed per interval.
-     * @param int $limit Number of requests.
+     * @param int|string $limit Number of requests.
      * @return $this
      */
-    public function setLimit(int $limit): static
+    public function setLimit(int|string $limit): static
     {
-        $this->limit = $limit;
+        $this->limit = (int)$limit;
         return $this;
     }
 
@@ -253,8 +253,13 @@ class Officer extends AbstractContainerProvider implements HttpFoundationRequest
             $ips = $request->get_attributes()[IpRulesInterface::IPS];
         }
 
-        $rules = $ips instanceof IpRulesInterface ? $ips : new IpRules($ips);
+        /** @var IpRules $rules */
+        $rules = $this->getContainer()->get(ServiceProvider::IP_RULES);
+        if (!$ips instanceof IpRulesInterface) {
+            $rules->allow($ips[IpRulesInterface::ALLOW] ?? '')->deny($ips[IpRulesInterface::DENY] ?? '');
+        }
 
+//        error_log(print_r($this->getIpAddress(), true));
         if (!$rules->check($this->getIpAddress())) {
             $response = $this->getForbiddenError();
         }
