@@ -96,9 +96,9 @@ use FrostyMedia\WpRestCop\RestApi\Rules\IpRulesInterface;
 use FrostyMedia\WpRestCop\RestApi\Officer;
 
 /**
- * Global IP rules configuration.
+ * Modify IP rules configuration via code.
  */
-add_action( 'wp_rest_cop_plugin_loaded', static function(Officer $officer, IpRulesInterface $ipRules): void {
+add_action( 'wp_rest_cop_rest_api_init', static function(Officer $officer, IpRulesInterface $ipRules): void {
     $ipRules->allow('192.168.50.4'); // Also accepts an array of IP addresses.
     
     // Or...
