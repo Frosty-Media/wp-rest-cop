@@ -94,7 +94,7 @@ class Settings extends AbstractContainerProvider
 
         $section_id = $section_manager->addSection(
             new SettingSection([
-                SettingSection::SECTION_ID => self::SETTINGS, // Unique section ID
+                SettingSection::SECTION_ID => self::SETTINGS, // Unique section ID.
                 SettingSection::SECTION_TITLE => 'REST Cop Settings',
             ])
         );
@@ -164,7 +164,7 @@ class Settings extends AbstractContainerProvider
                 '<a href="%s" aria-label="%s">%s</a>',
                 menu_page_url(self::MENU_SLUG, false),
                 esc_attr__('Settings for WP REST Cop', 'wp-rest-cop'),
-                esc_html__('Settings', 'default')
+                esc_html__('Settings', 'wp-rest-cop')
             )
         );
 
