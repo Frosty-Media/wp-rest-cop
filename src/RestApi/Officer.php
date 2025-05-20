@@ -58,13 +58,13 @@ class Officer extends AbstractContainerProvider implements HttpFoundationRequest
      */
     public function addHooks(): void
     {
-        $this->addAction('rest_api_init', [$this, 'initializeSettings']);
-        $this->addAction('rest_api_init', [$this, 'initializeIpRules']);
+        $this->addAction('wp_rest_cop_plugin_loaded', [$this, 'initialize'], 0);
+        $this->addAction('rest_api_init', [$this, 'restApiInit']);
         $this->addFilter('rest_authentication_errors', [$this, 'checkIpRules']);
         $this->addFilter('rest_pre_dispatch', [$this, 'maybeThrottleRequest'], 10, 3);
         $this->addFilter('rest_dispatch_request', [$this, 'checkRouteIpRules'], 10, 2);
 
-        do_action('wp_rest_cop_plugin_loaded', $this, $this->getContainer()->get(ServiceProvider::IP_RULES));
+        do_action('wp_rest_cop_plugin_loaded', $this);
     }
 
     /**
@@ -137,6 +137,23 @@ class Officer extends AbstractContainerProvider implements HttpFoundationRequest
     {
         $this->limit = (int)$limit;
         return $this;
+    }
+
+    /**
+     * Trigger our initialization methods.
+     */
+    protected function initialize(): void
+    {
+        $this->initializeSettings();
+        $this->initializeIpRules();
+    }
+
+    /**
+     * Rest API Initiation.
+     */
+    protected function restApiInit(): void
+    {
+        do_action('wp_rest_cop_rest_api_init', $this, $this->getContainer()->get(ServiceProvider::IP_RULES));
     }
 
     /**
