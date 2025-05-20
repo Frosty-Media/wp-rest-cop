@@ -1,0 +1,12 @@
+/.git export-ignore
+/.github export-ignore
+/tests export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore
+package.json export-ignore
+package-lock.json export-ignore
+phpcs-report.xml export-ignore
+phpcs-ruleset.xml export-ignore
+psalm.xml export-ignore
+phpunit.xml export-ignore
+rector.php export-ignore
