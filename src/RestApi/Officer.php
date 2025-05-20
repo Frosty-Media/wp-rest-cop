@@ -68,7 +68,7 @@ class Officer extends AbstractContainerProvider implements HttpFoundationRequest
         $this->addFilter('rest_pre_dispatch', [$this, 'maybeThrottleRequest'], 10, 3);
         $this->addFilter('rest_dispatch_request', [$this, 'checkRouteIpRules'], 10, 2);
 
-        do_action('wp_rest_cop_plugin_loaded', $this);
+        do_action('wp_rest_cop_plugin_loaded', $this, $this->getContainer()->get(ServiceProvider::IP_RULES));
     }
 
     /**
@@ -211,15 +211,13 @@ class Officer extends AbstractContainerProvider implements HttpFoundationRequest
         WP_REST_Server $server,
         WP_REST_Request $request
     ): ?WP_REST_Response {
-        // Bail if the interval is -1.
-        if ($this->getInterval() <= -1) {
-            return $response;
-        }
-
         /**
-         * Allow skipping throttle for certain requests
+         * Allow skipping throttle for certain requests or if the interval is -1.
          */
-        if (filter_var(apply_filters('wp_rest_cop_skip_throttle', false, $request, $server), FILTER_VALIDATE_BOOLEAN)) {
+        if (
+            $this->getInterval() === -1 ||
+            filter_var(apply_filters('wp_rest_cop_skip_throttle', false, $request, $server), FILTER_VALIDATE_BOOLEAN)
+        ) {
             return $response;
         }
 
