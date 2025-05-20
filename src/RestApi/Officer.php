@@ -7,6 +7,7 @@ namespace FrostyMedia\WpRestCop\RestApi;
 use FrostyMedia\WpRestCop\RestApi\Rules\IpRules;
 use FrostyMedia\WpRestCop\RestApi\Rules\IpRulesInterface;
 use FrostyMedia\WpRestCop\ServiceProvider;
+use Psr\Container\ContainerInterface;
 use TheFrosty\WpUtilities\Plugin\AbstractContainerProvider;
 use TheFrosty\WpUtilities\Plugin\HttpFoundationRequestInterface;
 use TheFrosty\WpUtilities\Plugin\HttpFoundationRequestTrait;
@@ -39,19 +40,27 @@ class Officer extends AbstractContainerProvider implements HttpFoundationRequest
     use HttpFoundationRequestTrait;
 
     public const string OPTION = 'wp_rest_cop_settings';
+    protected const int DEFAULT_INTERVAL = MINUTE_IN_SECONDS;
+    protected const int DEFAULT_LIMIT = MINUTE_IN_SECONDS;
 
     /**
-     * Number of requests allowed per interval.
-     * @var integer $limit
+     * Officer constructor.
+     * @param ContainerInterface|null $container
+     * @param int $interval
+     * @param int $limit
      */
-    protected int $limit;
+    public function __construct(
+        ?ContainerInterface $container = null,
+        protected int $interval = self::DEFAULT_INTERVAL,
+        protected int $limit = self::DEFAULT_LIMIT
+    ) {
+        parent::__construct($container);
+    }
 
     /**
-     * Seconds per interval.
-     * @var integer $interval
+     * Get the option array.
+     * @return array
      */
-    protected int $interval;
-
     public static function getSettings(): array
     {
         return get_option(self::OPTION, []);
@@ -75,7 +84,7 @@ class Officer extends AbstractContainerProvider implements HttpFoundationRequest
      * Retrieve an identifier for the current client.
      * If a user is logged in, their user ID will be used, otherwise, defaults
      * to the current client's IP address.
-     * @return int|string
+     * @return string
      */
     public function getClientId(): string
     {
@@ -104,26 +113,6 @@ class Officer extends AbstractContainerProvider implements HttpFoundationRequest
     }
 
     /**
-     * Retrieve the rate limit.
-     * @return int
-     */
-    public function getLimit(): int
-    {
-        return $this->limit;
-    }
-
-    /**
-     * Set the number of requests allowed per interval.
-     * @param int $limit Number of requests.
-     * @return $this
-     */
-    public function setLimit(int $limit): static
-    {
-        $this->limit = $limit;
-        return $this;
-    }
-
-    /**
      * Retrieve the global rate limit interval.
      * @return int
      */
@@ -144,6 +133,26 @@ class Officer extends AbstractContainerProvider implements HttpFoundationRequest
     }
 
     /**
+     * Retrieve the rate limit.
+     * @return int
+     */
+    public function getLimit(): int
+    {
+        return $this->limit;
+    }
+
+    /**
+     * Set the number of requests allowed per interval.
+     * @param int $limit Number of requests.
+     * @return $this
+     */
+    public function setLimit(int $limit): static
+    {
+        $this->limit = $limit;
+        return $this;
+    }
+
+    /**
      * Initialize the settings options.
      */
     protected function initializeSettings(): void
@@ -152,8 +161,8 @@ class Officer extends AbstractContainerProvider implements HttpFoundationRequest
 
         if (empty($settings)) {
             $settings = [
-                'interval' => MINUTE_IN_SECONDS,
-                'limit' => 60,
+                'interval' => self::DEFAULT_INTERVAL,
+                'limit' => self::DEFAULT_LIMIT,
                 'rules' => [
                     IpRulesInterface::ALLOW => [
                         '127.0.0.1',
@@ -165,7 +174,7 @@ class Officer extends AbstractContainerProvider implements HttpFoundationRequest
             update_option(self::OPTION, $settings);
         }
 
-        $this->setLimit($settings['limit'])->setInterval($settings['interval']);
+        $this->setInterval($settings['interval'])->setLimit($settings['limit']);
     }
 
     /**
@@ -178,15 +187,15 @@ class Officer extends AbstractContainerProvider implements HttpFoundationRequest
         /** @var IpRules $rules */
         $rules = $this->getContainer()->get(ServiceProvider::IP_RULES);
         $rules
-            ->allow($settings['rules'][IpRulesInterface::ALLOW] ?? [])
-            ->deny($settings['rules'][IpRulesInterface::DENY] ?? []);
+            ->allow($settings['rules'][IpRulesInterface::ALLOW] ?? '')
+            ->deny($settings['rules'][IpRulesInterface::DENY] ?? '');
     }
 
     /**
      * Check global IP address settings.
-     * @param WP_Error|true|null $error WP_Error if authentication error,
+     * @param WP_Error|bool|null $error WP_Error if authentication error,
      *  null if authentication method wasn't used, true if authentication succeeded.
-     * @return WP_Error|true|null
+     * @return WP_Error|bool|null
      */
     protected function checkIpRules(WP_Error|bool|null $error): WP_Error|bool|null
     {

@@ -1,6 +1,6 @@
 # WP REST Cop
 
-![WP Rest Cop](.github/wp-rest-cop.png?raw=true "WP Rest Cop")
+![WP Rest Cop](.github/wp-rest-cop.jpg?raw=true "WP Rest Cop")
 
 [![PHP from Packagist](https://img.shields.io/packagist/php-v/Frosty-Media/wp-rest-cop.svg)]()
 [![Latest Stable Version](https://img.shields.io/packagist/v/Frosty-Media/wp-rest-cop.svg)](https://packagist.org/packages/Frosty-Media/wp-rest-cop)
