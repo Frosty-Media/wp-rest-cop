@@ -47,15 +47,7 @@ class IpRules implements IpRulesInterface
      */
     public function check(string $ip): bool
     {
-        if (!empty($this->allow) && !$this->isAllowed($ip)) {
-            return false;
-        }
-
-        if (!empty($this->deny) && $this->isDenied($ip)) {
-            return false;
-        }
-
-        return true;
+        return !((!empty($this->allow) && !$this->isAllowed($ip)) || (!empty($this->deny) && $this->isDenied($ip)));
     }
 
     /**
