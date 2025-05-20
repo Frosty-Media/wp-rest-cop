@@ -44,16 +44,15 @@ $plugin
 
 // Make sure we set up our default settings.
 register_activation_hook(__FILE__, static function () use ($container): void {
-    $cop = new Officer();
-    $cop->setContainer($container);
     $initializeSettings = new ReflectionMethod(Officer::class, 'initializeSettings');
-    $initializeSettings->invoke($cop);
+    $initializeSettings->invoke(new Officer($container));
 });
 
 /**
  * Register our CLI command.
  */
 add_action('cli_init', static function () use ($container): void {
-    $cli = (new Cli\RestCop())->setContainer($container);
-    WP_CLI::add_command('restcop', $cli);
+    $initializeIpRules = new ReflectionMethod(Officer::class, 'initializeIpRules');
+    $initializeIpRules->invoke(new Officer($container));
+    WP_CLI::add_command('restcop', (new Cli\RestCop())->setContainer($container));
 });
