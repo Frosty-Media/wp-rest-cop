@@ -1,8 +1,13 @@
 {
-  "name": "frosty-media/wp-tally",
+  "name": "frosty-media/wp-rest-cop",
   "type": "wordpress-plugin",
   "license": "GPL-2.0-or-later",
   "description": "A WordPress plugin for managing access to the WP REST API.",
+  "keywords": [
+    "wordpress-plugin",
+    "wordpress-rest-api",
+    "rate-limiting"
+  ],
   "authors": [
     {
       "name": "Brady Vercher",
