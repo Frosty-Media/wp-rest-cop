@@ -26,6 +26,7 @@ use ReflectionMethod;
 use TheFrosty\WpUtilities\Plugin\PluginFactory;
 use TheFrosty\WpUtilities\WpAdmin\DisablePluginUpdateCheck;
 use WP_CLI;
+use function add_action;
 use function defined;
 
 if (is_readable(__DIR__ . '/vendor/autoload.php')) {
@@ -52,7 +53,7 @@ register_activation_hook(__FILE__, static function () use ($container): void {
 /**
  * Register our CLI command.
  */
-if (defined('WP_CLI') && WP_CLI) {
+add_action('cli_init', static function () use ($container): void {
     $cli = (new Cli\RestCop())->setContainer($container);
     WP_CLI::add_command('restcop', $cli);
-}
+});
