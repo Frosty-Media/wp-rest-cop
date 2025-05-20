@@ -21,6 +21,7 @@ namespace FrostyMedia\WpRestCop;
 
 defined('ABSPATH') || exit;
 
+use Dwnload\WpSettingsApi\WpSettingsApi;
 use FrostyMedia\WpRestCop\RestApi\Officer;
 use ReflectionMethod;
 use TheFrosty\WpUtilities\Plugin\PluginFactory;
@@ -39,6 +40,8 @@ $container->register(new ServiceProvider());
 
 $plugin
     ->add(new DisablePluginUpdateCheck())
+    ->add(new Settings\Settings())
+    ->add(new WpSettingsApi(Settings\Settings::factory($plugin)))
     ->addOnHook(Officer::class, 'rest_api_init', priority: 5, args: [$container])
     ->initialize();
 

@@ -37,6 +37,7 @@
   },
   "require": {
     "php": "^8.3",
+    "dwnload/wp-settings-api": "^3.11",
     "pimple/pimple": "~3.0",
     "symfony/http-foundation": "^7.1.7",
     "thefrosty/wp-utilities": "^3.3"

@@ -12,7 +12,7 @@ use function is_string;
 /**
  * IP address rules class.
  * phpcs:disable Squiz.Commenting.FunctionComment.MissingParamTag
- * @package Cedaro\WPRESTCop
+ * @package FrostyMedia\WpRestCop\RestApi\Rules
  */
 class IpRules implements IpRulesInterface
 {
@@ -34,12 +34,12 @@ class IpRules implements IpRulesInterface
      */
     public function __construct(array $rules = [])
     {
-        if (isset($rules['allow'])) {
-            $this->allow($rules['allow']);
+        if (isset($rules[self::ALLOW])) {
+            $this->allow($rules[self::ALLOW]);
         }
 
-        if (isset($rules['deny'])) {
-            $this->deny($rules['deny']);
+        if (isset($rules[self::DENY])) {
+            $this->deny($rules[self::DENY]);
         }
     }
 

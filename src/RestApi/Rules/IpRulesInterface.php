@@ -6,12 +6,13 @@ namespace FrostyMedia\WpRestCop\RestApi\Rules;
 
 /**
  * Access rules interface.
- * @package Cedaro\WPRESTCop
+ * @package FrostyMedia\WpRestCop\RestApi\Rules
  */
 interface IpRulesInterface
 {
     public const string ALLOW = 'allow';
     public const string DENY = 'deny';
+    public const string IPS = 'ips';
 
     /**
      * Whether client ID passes allowed and denied checks.

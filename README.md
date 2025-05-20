@@ -124,11 +124,11 @@ use FrostyMedia\WpRestCop\RestApi\Rules\IpRulesInterface;
 /**
  * Register routes.
  */
-add_action( 'rest_api_init', static function (): void {
+add_action('rest_api_init', static function (): void {
     register_rest_route( 'myplugin/v1', '/internal/(?P<id>\d+)', [
         'methods' => 'GET',
         'callback' => 'my_awesome_expensive_func',
-        'ips' => [
+        IpRulesInterface::IPS => [
             IpRulesInterface::ALLOW => ['192.168.50.4'],
             IpRulesInterface::DENY => ['66.249.66.1'],
         ],
@@ -154,4 +154,3 @@ A few [WP CLI](http://wp-cli.org/) commands are included to configure the plugin
 * Additional rate limit strategies.
 * More route-level capabilities.
 * Advanced access rules.
-* Administration UI.

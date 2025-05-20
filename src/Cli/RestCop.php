@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace FrostyMedia\WpRestCop\Cli;
 
-use FrostyMedia\WpRestCop\RestApi\Officer;
+use Dwnload\WpSettingsApi\Api\Options;
 use FrostyMedia\WpRestCop\RestApi\Rules\IpRules;
 use FrostyMedia\WpRestCop\RestApi\Rules\IpRulesInterface;
 use FrostyMedia\WpRestCop\ServiceProvider;
+use FrostyMedia\WpRestCop\Settings\Settings;
 use TheFrosty\WpUtilities\Plugin\ContainerAwareTrait;
 use WP_CLI;
 use function array_diff;
@@ -98,11 +99,11 @@ class RestCop
             esc_html__('Source', 'wp-rest-cop'),
         ];
 
-        $settings = Officer::getSettings();
+        $settings = Options::getOption(Settings::SETTINGS);
         $action_l10n = esc_html__('ALLOW', 'wp-rest-cop');
         foreach ($this->getRules()->getAllowed() as $ip) {
             $source = 'code';
-            if (in_array($ip, $settings['rules'][IpRulesInterface::ALLOW], true)) {
+            if (in_array($ip, $settings[Settings::SETTING_ALLOW_RULES], true)) {
                 $source = 'option';
             }
 
@@ -112,7 +113,7 @@ class RestCop
         $action_l10n = esc_html__('DENY', 'wp-rest-cop');
         foreach ($this->getRules()->getDenied() as $ip) {
             $source = 'code';
-            if (in_array($ip, $settings['rules'][IpRulesInterface::DENY], true)) {
+            if (in_array($ip, $settings[Settings::SETTING_DENY_RULES], true)) {
                 $source = 'option';
             }
 
@@ -139,14 +140,14 @@ class RestCop
      */
     public function set(array $args): void
     {
-        $settings = Officer::getSettings();
+        $settings = Options::getOption(Settings::SETTINGS);
 
-        if (!in_array($args[0], ['interval', 'limit'], true)) {
+        if (!in_array($args[0], [Settings::SETTING_INTERVAL, Settings::SETTING_LIMIT], true)) {
             WP_CLI::error(sprintf(esc_html__('%s is not a valid setting.', 'wp-rest-cop'), $args[0]));
         }
 
         $settings[$args[0]] = (int)$args[1];
-        update_option(Officer::OPTION, $settings);
+        update_option(Settings::SETTINGS, $settings);
         WP_CLI::success(sprintf(esc_html__('Updated %1$s setting to %2$s.', 'wp-rest-cop'), $args[0], $args[1]));
     }
 
@@ -160,12 +161,22 @@ class RestCop
      */
     protected function updateOption(string $key, array $args, bool $delete = false): void
     {
-        $settings = Officer::getSettings();
-        $ips = $settings['rules'][$key] ?? [];
-        $ips = $delete ? array_diff($ips, $args) : array_merge($ips, $args);
-        $settings['rules'][$key] = array_unique(array_filter($ips));
+        $update = static function (string $key) use ($args, $delete): void {
+            $settings = Options::getOption(Settings::SETTINGS);
+            $ips = $settings[$key] ?? [];
+            $ips = $delete ? array_diff($ips, $args) : array_merge($ips, $args);
+            $settings[$key] = array_unique(array_filter($ips));
+            update_option(Settings::SETTINGS, $settings);
+        };
 
-        update_option(Officer::OPTION, $settings);
+        switch ($key) {
+            case IpRulesInterface::ALLOW:
+                $update(Settings::SETTING_ALLOW_RULES);
+                break;
+            case IpRulesInterface::DENY:
+                $update(Settings::SETTING_DENY_RULES);
+                break;
+        }
     }
 
     /**
