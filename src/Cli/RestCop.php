@@ -161,7 +161,7 @@ class RestCop
      */
     protected function updateOption(string $key, array $args, bool $delete = false): void
     {
-        $update = static function(string $key) use ($args, $delete): void {
+        $update = static function (string $key) use ($args, $delete): void {
             $settings = Options::getOption(Settings::SETTINGS);
             $ips = $settings[$key] ?? [];
             $ips = $delete ? array_diff($ips, $args) : array_merge($ips, $args);
