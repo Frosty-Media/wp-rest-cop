@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace FrostyMedia\WpRestCop\RestApi;
 
+use Dwnload\WpSettingsApi\Api\Options;
 use FrostyMedia\WpRestCop\RestApi\Rules\IpRules;
 use FrostyMedia\WpRestCop\RestApi\Rules\IpRulesInterface;
 use FrostyMedia\WpRestCop\ServiceProvider;
+use FrostyMedia\WpRestCop\Settings\Settings;
 use Psr\Container\ContainerInterface;
 use TheFrosty\WpUtilities\Plugin\AbstractContainerProvider;
 use TheFrosty\WpUtilities\Plugin\HttpFoundationRequestInterface;
@@ -22,13 +24,11 @@ use function do_action;
 use function esc_html__;
 use function filter_var;
 use function get_current_user_id;
-use function get_option;
 use function is_user_logged_in;
 use function rest_convert_error_to_response;
 use function sprintf;
 use function update_option;
 use const FILTER_VALIDATE_BOOLEAN;
-use const MINUTE_IN_SECONDS;
 
 /**
  * RateLimit class.
@@ -39,10 +39,6 @@ class Officer extends AbstractContainerProvider implements HttpFoundationRequest
 
     use HttpFoundationRequestTrait;
 
-    public const string OPTION = 'wp_rest_cop_settings';
-    protected const int DEFAULT_INTERVAL = MINUTE_IN_SECONDS;
-    protected const int DEFAULT_LIMIT = MINUTE_IN_SECONDS;
-
     /**
      * Officer constructor.
      * @param ContainerInterface|null $container
@@ -51,19 +47,10 @@ class Officer extends AbstractContainerProvider implements HttpFoundationRequest
      */
     public function __construct(
         ?ContainerInterface $container = null,
-        protected int $interval = self::DEFAULT_INTERVAL,
-        protected int $limit = self::DEFAULT_LIMIT
+        protected int $interval = Settings::DEFAULT_INTERVAL,
+        protected int $limit = Settings::DEFAULT_LIMIT
     ) {
         parent::__construct($container);
-    }
-
-    /**
-     * Get the option array.
-     * @return array
-     */
-    public static function getSettings(): array
-    {
-        return get_option(self::OPTION, []);
     }
 
     /**
@@ -157,24 +144,19 @@ class Officer extends AbstractContainerProvider implements HttpFoundationRequest
      */
     protected function initializeSettings(): void
     {
-        $settings = self::getSettings();
+        $settings = Options::getOptions(Settings::SETTINGS);
 
         if (empty($settings)) {
             $settings = [
-                'interval' => self::DEFAULT_INTERVAL,
-                'limit' => self::DEFAULT_LIMIT,
-                'rules' => [
-                    IpRulesInterface::ALLOW => [
-                        '127.0.0.1',
-                        '::1',
-                    ],
-                    IpRulesInterface::DENY => [],
-                ],
+                Settings::SETTING_INTERVAL => Settings::DEFAULT_INTERVAL,
+                Settings::SETTING_LIMIT => Settings::DEFAULT_LIMIT,
+                Settings::SETTING_ALLOW_RULES => ['127.0.0.1', '::1'],
+                Settings::SETTING_DENY_RULES => [],
             ];
-            update_option(self::OPTION, $settings);
+            update_option(Settings::SETTINGS, $settings);
         }
 
-        $this->setInterval($settings['interval'])->setLimit($settings['limit']);
+        $this->setInterval($settings[Settings::SETTING_INTERVAL])->setLimit($settings[Settings::SETTING_LIMIT]);
     }
 
     /**
@@ -183,12 +165,11 @@ class Officer extends AbstractContainerProvider implements HttpFoundationRequest
      */
     protected function initializeIpRules(): void
     {
-        $settings = self::getSettings();
         /** @var IpRules $rules */
         $rules = $this->getContainer()->get(ServiceProvider::IP_RULES);
         $rules
-            ->allow($settings['rules'][IpRulesInterface::ALLOW] ?? '')
-            ->deny($settings['rules'][IpRulesInterface::DENY] ?? '');
+            ->allow(Options::getOption(Settings::SETTING_ALLOW_RULES, Settings::SETTINGS))
+            ->deny(Options::getOption(Settings::SETTING_DENY_RULES, Settings::SETTINGS));
     }
 
     /**
@@ -268,8 +249,8 @@ class Officer extends AbstractContainerProvider implements HttpFoundationRequest
     protected function checkRouteIpRules(mixed $response, WP_REST_Request $request): mixed
     {
         $ips = [];
-        if (!empty($request->get_attributes()['ips'])) {
-            $ips = $request->get_attributes()['ips'];
+        if (!empty($request->get_attributes()[IpRulesInterface::IPS])) {
+            $ips = $request->get_attributes()[IpRulesInterface::IPS];
         }
 
         $rules = $ips instanceof IpRulesInterface ? $ips : new IpRules($ips);
