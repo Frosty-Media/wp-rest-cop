@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: WP REST Cop
- * Plugin URI: https://github.com/rosty-Media/wp-rest-cop
+ * Plugin URI: https://github.com/Frosty-Media/wp-rest-cop
  * Description: Manage access to the WP REST API.
  * Version: 2.0.0
  * Author: Austin Passy
