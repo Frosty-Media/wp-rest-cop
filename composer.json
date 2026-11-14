@@ -29,9 +29,6 @@
       "roots/wordpress-core-installer": true
     },
     "optimize-autoloader": true,
-    "platform": {
-      "php": "8.3"
-    },
     "preferred-install": "dist",
     "sort-packages": true
   },
@@ -52,7 +49,7 @@
     "slevomat/coding-standard": "~8.18",
     "squizlabs/php_codesniffer": "^3.13 || ^4.0.2",
     "szepeviktor/phpstan-wordpress": "^2.0",
-    "vimeo/psalm": "^6.0",
+    "vimeo/psalm": "^7.3",
     "wp-cli/wp-cli": "^2.12",
     "wp-coding-standards/wpcs": "^3.4"
   },
