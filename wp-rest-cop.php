@@ -3,13 +3,13 @@
  * Plugin Name: WP REST Cop
  * Plugin URI: https://github.com/Frosty-Media/wp-rest-cop
  * Description: Manage access to the WP REST API.
- * Version: 2.0.0
+ * Version: 2.0.1
  * Author: Austin Passy
  * Author URI: https://austin.passy.co
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  * Requires at least: 6.8
- * Tested up to: 6.8.1
+ * Tested up to: 7.2.0
  * Requires PHP: 8.3
  * Plugin URI: https://github.com/Frosty-Media/wp-rest-cop
  * GitHub Plugin URI: https://github.com/Frosty-Media/wp-rest-cop
